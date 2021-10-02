@@ -5,3 +5,5 @@
 2. [Búsquedas en espacios de estados. 8 puzzle.](/busquedas_ciegas_e_informadas_8_puzzle).
     
 3. [Algoritmos genéticos.](/algoritmos_geneticos)
+
+4. [Agentes reactivos. Ant clustering.](/agentes_reactivos_clustering)
