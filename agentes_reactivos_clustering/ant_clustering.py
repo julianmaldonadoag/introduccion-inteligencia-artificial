@@ -1,6 +1,6 @@
 '''
 Author: Julian Maldonado.
-Description: Clusterización de objetos basado en el comportamiento de las hormigas.
+Description: Clusterización de objetos basado en el comportamiento de las hormigas. 
 '''
 
 import pygame
@@ -76,11 +76,13 @@ class Environment:
     x_max = 200
     y_max = 200
 
-    def __init__(self, state, agents, width, height):
+    def __init__(self, state, agents, num_cols, num_rows, width_screen, height_screen):
         self.state = state # Array bidimensional donde se almacenan los objetos Corpse.
         self.agents = agents # Lista de objetos Agent.
-        self.width = width
-        self.height = height
+        self.num_cols = num_cols
+        self.num_rows = num_rows
+        self.width_square = width_screen / num_cols # Ancho de una celda en pixeles.
+        self.height_square = height_screen / num_rows # Alto de una celda en pixeles.
         self.bg_color = (255, 255, 255) # Color del fondo.
         self.object_cell_color = (0, 0, 0) # Color de la celda que tiene un objeto.
 
@@ -90,11 +92,15 @@ class Environment:
         # mientras que 'y' las filas (arriba a abajo).
         screen.fill(self.bg_color)
 
-        # Por cada objeto Corpse que se encuentre en la matriz se pinta un pixel.
-        for x in range(self.width):
-            for y in range(self.height):
+        for x in range(self.num_cols):
+            for y in range(self.num_rows):
                 if self.state[x, y]:
-                    screen.set_at((x, y), self.object_cell_color)
+                    # Se crea el cuadrado de cada celda que tiene un objeto Corpse.
+                    square = [  (x * self.width_square,     y * self.height_square),
+                                ((x+1) * self.width_square, y * self.height_square),
+                                ((x+1) * self.width_square, (y+1) * self.height_square),
+                                (x * self.width_square,     (y+1) * self.height_square)]
+                    pygame.draw.polygon(screen, self.object_cell_color, square, 0)
         pygame.display.flip() # Muestra la cuadricula
 
     def fractionObjects(self, agent) -> float:
@@ -155,8 +161,10 @@ class Environment:
 # -------------------------------- Programa principal -------------------------------
 
 def main():
+    width_screen, height_screen = 600, 600
+
     # Parametros establecidos.
-    width, height = 200, 200 # Numero de columnas y filas.
+    num_cols, num_rows = 200, 200 # Numero de columnas y filas.
     num_objects = 5000
     num_agents = 10
     k1 = 0.1
@@ -165,26 +173,28 @@ def main():
     t_max = 5000000
 
     # Estado de las celdas del ambiente. Celda con objeto = objeto Corpse, celda libre = None
-    env_state = np.full((width, height), None)
+    env_state = np.full((num_cols, num_rows), None)
     # Se crean y ubican los objetos (Corpse) aleatorimente.
     for _ in range(num_objects):
-        x = random.randint(0, width - 1)
-        y = random.randint(0, height - 1)
+        x = random.randint(0, num_cols - 1)
+        y = random.randint(0, num_rows - 1)
+        while env_state[x, y] != None:
+            x = random.randint(0, num_cols - 1)
+            y = random.randint(0, num_rows - 1)
         env_state[x, y] = Corpse(x, y)
     # Se crean y ubican aleatoriamente los agentes.
     agents = []
     for _ in range(num_agents):
-        x = random.randint(0, width - 1)
-        y = random.randint(0, height - 1)
+        x = random.randint(0, num_cols - 1)
+        y = random.randint(0, num_rows - 1)
         agents.append(Agent(x, y))
     # Se crea el ambiente.
-    env = Environment(env_state, agents, width, height)
+    env = Environment(env_state, agents, num_cols, num_rows, width_screen, height_screen)
 
     # Se configura e inicializa la interfaz grafica.
     pygame.init()
     pygame.display.set_caption('Ant clustering')
-    screen = pygame.display.set_mode((width, height))
-    env.printEnviroment(screen)
+    screen = pygame.display.set_mode((width_screen, height_screen))
 
     # Bucle principal.
     while (t <= t_max):
@@ -193,9 +203,11 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        if (t % 25000 == 0):
+        # Reimpresion de la pantalla cada 50,000 pasos.
+        if (t % 50000 == 0):
             print('t = ', t)
             env.printEnviroment(screen)
+        # Valores de "t" a capturar.
         if (t == 0 or t == 50000 or t == 1000000 or t == 5000000):
             print('Take the screenshot!')
             winsound.Beep(1500, 200)
