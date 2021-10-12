@@ -8,4 +8,4 @@
 
 4. [Agentes reactivos. Ant clustering.](/agentes_reactivos_clustering)
 
-4. [Agentes reactivos. Ant clustering and sorting. Uso de memeria](/agentes_reactivos_clustering_sorting)
+4. [Agentes reactivos. Ant clustering and sorting. Uso de memoria](/agentes_reactivos_clustering_sorting)
