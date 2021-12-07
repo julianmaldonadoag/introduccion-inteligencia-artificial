@@ -8,4 +8,6 @@
 
 4. [Agentes reactivos. Ant clustering.](/agentes_reactivos_clustering)
 
-4. [Agentes reactivos. Ant clustering and sorting. Uso de memoria](/agentes_reactivos_clustering_sorting)
+5. [Agentes reactivos. Ant clustering and sorting. Uso de memoria](/agentes_reactivos_clustering_sorting)
+
+6. [Procesos de decisión de Markov](/procesos_de_decision_de_markov)
